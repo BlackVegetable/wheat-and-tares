@@ -10,13 +10,12 @@ import time
 
 #Private variables
 commandArgs = sys.argv
-host = None
 
 
 def usage():
     print("You did not provide all the necessary arguments")
     print("Correct usage of this software:")
-    print("terminal.py <HostIP> <hostPort> [useFakeNetwork]")
+    print("terminal.py <YourIP> <PortToListenOn> [useFakeNetwork]")
     sys.exit(2)
 
 #make sure we have the required arguments
@@ -31,8 +30,8 @@ else:
     from network import network
 
 #Setup some variabls
-host = commandArgs[1]
-port = commandArgs[2]
+myIP = commandArgs[1]
+myPort = commandArgs[2]
 allMessages = []
 
 #Create an object that we use to send and receive data
@@ -47,7 +46,7 @@ def backgroundWorker():
         newMessages = objNetwork.getData()
         if (len(newMessages) > 0):
             for message in newMessages:
-                allMessages.append(host + ": " + message)
+                allMessages.append(myIP + ": " + message)
 
             with lock:
                 os.system('cls' if os.name == 'nt' else 'clear')
@@ -66,14 +65,21 @@ os.system('cls' if os.name == 'nt' else 'clear')
 #print the welcom message
 print("Welcome to the simple chat program that uses ")
 
+peerIP = raw_input("Enter the IP address of who you want to talk to: ")
+peerPort = None
+try:
+    peerPort = int(raw_input("Enter the port that your peer is using: "))
+except Exception as e:
+    print("Port must be a number")
+
 #Try to connect to peer, and loop until we do.
-while not objNetwork.connect():
-    print("Unable to connect to " + host + " on port " + port)
+while not objNetwork.connect(peerIP, peerPort):
+    print("Unable to connect to " + myIP + " on port " + myPort)
     print("Will try again in 10 seconds")
     time.sleep(10)
 
 #Give user status update
-print("We are connected to " + host + " on port " + port)
+print("We are connected to " + peerIP + " on port " + str(peerPort))
 
 #Create a background thread that is used to get data from networking object
 backgroundThread = threading.Thread(target=backgroundWorker)
