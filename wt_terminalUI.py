@@ -26,7 +26,7 @@ if (len(commandArgs) < 3):
 #If the third argument passed in is 1, then use the fake network object.
 if (len(commandArgs) > 3):
     if (commandArgs[3] == "1"):
-        from fakeNetwork import fakeNetwork as network
+        from wt_fakeNetwork import fakeNetwork as network
 else:
     from network import network
 
