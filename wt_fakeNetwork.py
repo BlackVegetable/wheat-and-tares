@@ -13,10 +13,10 @@ class fakeNetwork:
         self.receivedBuffer = []
         return tmpBuffer
 
-    def connect(self):
+    def connect(self, _peerIp, _peerPort):
         return True
 
-    def __init__(self, _host, _port):
-        self.host = _host
-        self.port = _port
+    def __init__(self, _listenIP, _listenPort):
+        self.host = _listenIP
+        self.port = _listenPort
         self.receivedBuffer = []
