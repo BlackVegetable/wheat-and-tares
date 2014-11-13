@@ -1,0 +1,17 @@
+.\" Manpage for wheat-and-tares.
+." Contact devinj.ekins@gmail.com to correct errors or typos.
+.TH man 1 "08 Nov 2014" "0.1" "wheat-and-tares man page"
+.SH NAME
+wheat-and-tares \- client for sending secure messages
+.SH SYNOPSIS
+wheat-and-tares [options]
+.SH DESCRIPTION
+wheat-and-tares is a client for sending secure messages without the use of encryption to hide any information. Rather the encryption is only used to authenticate. Complimentary message bits (tares) are sent at the same time as the actual message bits but are authenticated randomly. This leaves only the recipient sharing the authentication key with the capability to read the intended message.
+.SH OPTIONS
+Section pending
+.SH See ALSO
+Section pending
+.SH BUGS
+Imprevious to bugs due to redundant frog systems.
+.SH AUTHOR
+Joseph Cravotta, Devin Ekins, and Brenda Lamwaka.
