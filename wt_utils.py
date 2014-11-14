@@ -66,6 +66,51 @@ def compliment_bits(bit_list):
             raise Exception("Bad input found in bit list input: " + `b`)
     return comp
 
+def unpack_bits_to_message(signed_bits, auth_key, frag_bits=None):
+    '''Unpacks a group of signed bits into an authentic message.
+    Arguments:
+        signed_bits = a string containing a series of message bits, sequence
+                      numbers, a comma, and a 512-bit hash. Every signed message
+                      needs to be separated by a semi-colon.
+        auth_key = The authentication key corresponding to this communication.
+        frag_bits = Any bits that were remaining from a previous call to this
+                    function that were too few to compose an ASCII character.
+                    Do not supply if no fragmented bits were returned from a
+                    previous call.
+    Returns:
+        A string representing the message in the given signed_bits (and frag_bits
+        if present) and any fragmented bits left over. Returned as a dict:
+            {'msg': message_string, 'frag_bits': remaining_bits as a list of bits}.
+    '''
+    tuples = signed_bits.split(";")
+    msg_bits = []
+    if frag_bits:
+        msg_bits = frag_bits
+    for t in tuples:
+        if t == "":
+            continue
+        # Parse into components
+        t_split = t.split(",")
+        msg_bit = t_split[0][0]
+        seq_number = t_split[0][1:]
+        MAC = t_split[1]
+
+        test_hash = make_wheat_hash(msg_bit, seq_number, auth_key)
+        if test_hash == MAC:
+            # This is a genuine message.
+            msg_bits.append(int(msg_bit, 10))
+        else:
+            # This is a bogus message, ignore it.
+            pass
+    remainder_size = len(msg_bits) % 8
+    remainder_bits = []
+    if remainder_size > 0:
+        remainder_bits = msg_bits[-remainder_size:]
+        msg_bits = msg_bits[0:remainder_size]
+    message = bits_to_string(msg_bits)
+    return {'msg': message, 'frag_bits': remainder_bits}
+
+
 def package_message_to_bits(msg_str, last_seq, auth_key, fake_str="", fake_key=None,
                             custom_hash_func=None, entropy_file=None):
     '''Converts a string to a list of signed bit quartets. Signed bits are a
@@ -158,7 +203,7 @@ if __name__ == "__main__":
     orig_string = bits_to_string(bit_list)
     print orig_string
 
-    raw_input("Press the ENTER key to continue")
+    raw_input("Press the ENTER key to continue.")
     
     print "\n'Testing' HMAC generation:"
     print "Test 1: " + `make_tare_hash(0, 13)`
@@ -170,7 +215,7 @@ if __name__ == "__main__":
     print "Message being packaged: " + real_message
     print package_message_to_bits(real_message, 10, real_key)
 
-    raw_input("Press the ENTER key to continue")
+    raw_input("Press the ENTER key to continue.")
     
     print "Testing message packaging in duplication mode:"
     fake_key = "09876543210987654321098765432109"
@@ -178,5 +223,29 @@ if __name__ == "__main__":
 
     print "Message being packaged: " + real_message
     print "Fake message also being packaged: " + fake_message
-    print package_message_to_bits(real_message, 10, real_key,
-                                  fake_str=fake_message, fake_key=fake_key)
+    pkgd = package_message_to_bits(real_message, 10, real_key,
+                                   fake_str=fake_message, fake_key=fake_key)
+    print pkgd
+
+    raw_input("Press the ENTER key to continue.")
+    print "Testing reconstruction of real message."
+    
+    big_string = ""
+    for x in pkgd:
+        for y in x:
+            big_string += y
+            big_string += ";"
+
+    print unpack_bits_to_message(big_string, real_key)
+
+    long_msg =  "This is a test of the Wheat and Tares program!"
+    long_fake = "This is your final taco; I am cutting you off."
+    print "Trying something a bit longer: " + long_msg
+    pkgd = package_message_to_bits(long_msg, 593785, real_key,
+                                   fake_str=long_fake, fake_key=fake_key)
+    big_string = ""
+    for x in pkgd:
+        for y in x:
+            big_string += y
+            big_string += ";"
+    print unpack_bits_to_message(big_string, real_key)
