@@ -7,6 +7,7 @@ import sys
 import os
 import threading
 import time
+from wt_core import wtCore
 
 #Private variables
 commandArgs = sys.argv
@@ -23,19 +24,29 @@ if (len(commandArgs) < 3):
     usage()
 
 #If the third argument passed in is 1, then use the fake network object.
-if (len(commandArgs) > 3):
-    if (commandArgs[3] == "1"):
-        from wt_fakeNetwork import fakeNetwork as network
-else:
-    from network import network
+# if (len(commandArgs) > 3):
+#     if (commandArgs[3] == "1"):
+#         from wt_fakeNetwork import fakeNetwork as network
+# else:
+#     from wt_network import network
 
 #Setup some variabls
 myIP = commandArgs[1]
 myPort = commandArgs[2]
+
+#initialize our core, if error is returned print the error and then exit.
+core = None
+
+try:
+    core = wtCore()
+except Exception as e:
+    print(e)
+    sys.exit(2)
+
 allMessages = []
 
 #Create an object that we use to send and receive data
-objNetwork = network(commandArgs[1], commandArgs[2])
+# objNetwork = network(commandArgs[1], commandArgs[2])
 
 lock = threading.Lock()
 
@@ -43,7 +54,7 @@ lock = threading.Lock()
 #Call to get data from the networking object, then print data to the screen.
 def backgroundWorker():
     while True:
-        newMessages = objNetwork.getData()
+        newMessages = core.getMessage()
         if (len(newMessages) > 0):
             for message in newMessages:
                 allMessages.append(myIP + ": " + message)
