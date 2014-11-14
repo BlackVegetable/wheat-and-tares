@@ -23,15 +23,16 @@ class wtCore:
             data = self.objNetwork.getData()
             if(data is not None):
                 message = wt_utils.unpack_bits_to_message(data, self.key)
+                message = message["msg"]
                 self.messageList.append(message)
 
     def sendMessage(self, message):
         #This key is to get us started
         #get all the data to send.
-        quartets = wt_utils.package_message_to_bits(message, self.sequence, self.key)
+        quartets = wt_utils.package_message_to_bits(message, self.outSequence, self.key)
         #find how much to increment the sequence and then update sequence
         numberOfQuartets = len(quartets)
-        self.sequence += numberOfQuartets
+        self.outSequence += numberOfQuartets
         data = ""
         for quartet in quartets:
             data += quartet[0] + ";"
@@ -39,7 +40,7 @@ class wtCore:
             data += quartet[2] + ";"
             data += quartet[3] + ";"
 
-        self.objNetwork.sendData(message)
+        self.objNetwork.sendData(data)
 
     def getMessages(self):
         tmpMessageList = self.messageList

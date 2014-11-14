@@ -6,7 +6,7 @@
 class fakeNetwork:
 
     def sendData(self, _data):
-        print("sent:" + _data)
+        #print("sent:" + _data)
         self.receivedBuffer.append(_data)
 
     def getData(self):
