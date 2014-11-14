@@ -6,12 +6,15 @@
 class fakeNetwork:
 
     def sendData(self, _data):
+        print("sent:" + _data)
         self.receivedBuffer.append(_data)
 
     def getData(self):
-        tmpBuffer = self.receivedBuffer
-        self.receivedBuffer = []
-        return tmpBuffer
+        message = None
+        if (len(self.receivedBuffer) > 0):
+            message = self.receivedBuffer.pop()
+
+        return message
 
     def connect(self, _peerIp, _peerPort):
         return True

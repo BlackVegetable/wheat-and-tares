@@ -4,7 +4,8 @@
 
 #import sys
 import threading
-#import wt_utils
+import wt_utils
+from Crypto.Random import random
 
 
 class wt_Exception:
@@ -19,20 +20,47 @@ class wtCore:
 
     def backgroundWorker(self):
         while(True):
-            bits = []
-            while(True):
-                message = self.objNetwork.getData()
-                message = message.split(',')
-                bits.append(message[0])
+            data = self.objNetwork.getData()
+            if(data is not None):
+                message = wt_utils.unpack_bits_to_message(data, self.key)
+                self.messageList.append(message)
 
-    def getMessage(self):
-        return self.messageList
+    def sendMessage(self, message):
+        #This key is to get us started
+        #get all the data to send.
+        quartets = wt_utils.package_message_to_bits(message, self.sequence, self.key)
+        #find how much to increment the sequence and then update sequence
+        numberOfQuartets = len(quartets)
+        self.sequence += numberOfQuartets
+        data = ""
+        for quartet in quartets:
+            data += quartet[0] + ";"
+            data += quartet[1] + ";"
+            data += quartet[2] + ";"
+            data += quartet[3] + ";"
+
+        self.objNetwork.sendData(message)
+
+    def getMessages(self):
+        tmpMessageList = self.messageList
+        self.messageList = []
+        return tmpMessageList
+
+    def connect(self):
+        try:
+            self.objNetwork.connect(self.peerIP, self.peerPort)
+            return True
+        except Exception:
+            return False
 
     def __init__(self, myIP, myPort, peerIP, peerPort, fakeNetwork):
         self.myIP = myIP
         self.myPort = myPort
         self.peerIP = peerIP
         self.peerPort = peerPort
+        self.outSequence = random.randint(0, 100000)
+        self.inSequence = None
+        self.key = "12345678901234567890123456789012"
 
         #determine which network file to load
         if(fakeNetwork == 1):

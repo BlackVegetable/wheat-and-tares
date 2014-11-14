@@ -23,26 +23,16 @@ def usage():
 if (len(commandArgs) < 3):
     usage()
 
-#If the third argument passed in is 1, then use the fake network object.
-# if (len(commandArgs) > 3):
-#     if (commandArgs[3] == "1"):
-#         from wt_fakeNetwork import fakeNetwork as network
-# else:
-#     from wt_network import network
-
 #Setup some variabls
 myIP = commandArgs[1]
 myPort = commandArgs[2]
+useFakeNetwork = 0
 
-#initialize our core, if error is returned print the error and then exit.
+if (len(commandArgs) > 3) and (commandArgs[3] == "1"):
+    useFakeNetwork = 1
+
+#Declare the core vairable
 core = None
-
-try:
-    core = wtCore()
-except Exception as e:
-    print(e)
-    sys.exit(2)
-
 allMessages = []
 
 #Create an object that we use to send and receive data
@@ -54,7 +44,7 @@ lock = threading.Lock()
 #Call to get data from the networking object, then print data to the screen.
 def backgroundWorker():
     while True:
-        newMessages = core.getMessage()
+        newMessages = core.getMessages()
         if (len(newMessages) > 0):
             for message in newMessages:
                 allMessages.append(myIP + ": " + message)
@@ -64,6 +54,7 @@ def backgroundWorker():
                 for message in allMessages:
                     print(message)
 
+                print("")
                 #We cleared the prompt, notify user to press enter.
                 print("Press enter to start typing your message")
 
@@ -74,7 +65,7 @@ def backgroundWorker():
 os.system('cls' if os.name == 'nt' else 'clear')
 
 #print the welcom message
-print("Welcome to the simple chat program that uses ")
+print("Welcome to the simple chat program that is Wheat and Tare")
 
 peerIP = raw_input("Enter the IP address of who you want to talk to: ")
 peerPort = None
@@ -83,8 +74,15 @@ try:
 except Exception as e:
     print("Port must be a number")
 
+#initialize our core, if error is returned print the error and then exit.
+try:
+    core = wtCore(myIP, myPort, peerIP, peerPort, useFakeNetwork)
+except Exception as e:
+    print(e)
+    sys.exit(2)
+
 #Try to connect to peer, and loop until we do.
-while not objNetwork.connect(peerIP, peerPort):
+while not core.connect():
     print("Unable to connect to " + myIP + " on port " + myPort)
     print("Will try again in 10 seconds")
     time.sleep(10)
@@ -108,4 +106,4 @@ while (True):
     with lock:
         userMessage = raw_input("Type your message: ")
         allMessages.append("You: " + userMessage)
-        objNetwork.sendData(userMessage)
+        core.sendMessage(userMessage)
