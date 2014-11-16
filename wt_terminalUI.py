@@ -7,29 +7,62 @@ import sys
 import os
 import threading
 import time
+import getopt
 from wt_core import wtCore
 
 #Private variables
-commandArgs = sys.argv
+commandArgs = sys.argv[1:]
+myIP = None
+myPort = None
+useFakeNetwork = 0
 
 
 def usage():
-    print("You did not provide all the necessary arguments")
-    print("Correct usage of this software:")
-    print("terminal.py <YourIP> <PortToListenOn> [useFakeNetwork]")
+    print("")
+    print("usage: terminal.py -i <ipaddress> -p <port> [options]")
+    print("-i, --ipAddress      Host machine IP Address, may also use 127.0.0.1")
+    print("-p, --port           The port you use for incoming data")
+    print("-f, --fakeNetwork    Use a fake network instead")
     sys.exit(2)
 
 #make sure we have the required arguments
-if (len(commandArgs) < 3):
+# if (len(commandArgs) < 3):
+#     usage()
+
+# #Setup some variabls
+# myIP = commandArgs[1]
+# myPort = commandArgs[2]
+# useFakeNetwork = 0
+
+# if (len(commandArgs) > 3) and (commandArgs[3] == "1"):
+#     useFakeNetwork = 1
+
+#use getOpt to neatly go through the command arguments passed into us.
+try:
+    opts, args = getopt.getopt(commandArgs, "i:p:f", ["ipAddress", "port", "fakeNetwork"])
+except getopt.GetoptError:
+    usage()
+    sys.exit(2)
+
+#Go through the command line arguments passed in and set appropriate variables
+for opt, arg in opts:
+    if opt in("-i", "--ipAddress"):
+        myIP = arg
+    elif opt in ("-p", "--port"):
+        myPort = arg
+    elif opt in ("-f", "--fakeNetwork"):
+        useFakeNetwork = 1
+
+#Check to make sure we have the required arguments.
+if myIP is None:
+    print("")
+    print("You must provide the ip address for us to listen on")
     usage()
 
-#Setup some variabls
-myIP = commandArgs[1]
-myPort = commandArgs[2]
-useFakeNetwork = 0
-
-if (len(commandArgs) > 3) and (commandArgs[3] == "1"):
-    useFakeNetwork = 1
+if myPort is None:
+    print("")
+    print("You must provide the port to listen on")
+    usage()
 
 #Declare the core vairable
 core = None
