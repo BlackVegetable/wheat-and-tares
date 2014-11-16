@@ -23,6 +23,7 @@ def usage():
     print("-i, --ipAddress      Host machine IP Address, may also use 127.0.0.1")
     print("-p, --port           The port you use for incoming data")
     print("-f, --fakeNetwork    Use a fake network instead")
+    print("-h, --help           Prints out proper usage of this program")
     sys.exit(2)
 
 #make sure we have the required arguments
@@ -39,7 +40,7 @@ def usage():
 
 #use getOpt to neatly go through the command arguments passed into us.
 try:
-    opts, args = getopt.getopt(commandArgs, "i:p:f", ["ipAddress", "port", "fakeNetwork"])
+    opts, args = getopt.getopt(commandArgs, "i:p:fh", ["ipAddress", "port", "fakeNetwork", "help"])
 except getopt.GetoptError:
     usage()
     sys.exit(2)
@@ -52,6 +53,9 @@ for opt, arg in opts:
         myPort = arg
     elif opt in ("-f", "--fakeNetwork"):
         useFakeNetwork = 1
+    elif opt in ("-h", "--help"):
+        usage()
+        sys.exit(2)
 
 #Check to make sure we have the required arguments.
 if myIP is None:
