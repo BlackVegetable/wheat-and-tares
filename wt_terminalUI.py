@@ -40,7 +40,7 @@ def usage():
 
 #use getOpt to neatly go through the command arguments passed into us.
 try:
-    opts, args = getopt.getopt(commandArgs, "i:p:fh", ["ipAddress", "port", "fakeNetwork", "help"])
+    opts, args = getopt.getopt(commandArgs, "i:p:fh", ["ipAddress=", "port=", "fakeNetwork", "help"])
 except getopt.GetoptError:
     usage()
     sys.exit(2)
