@@ -35,10 +35,10 @@ class wtCore:
         self.outSequence += numberOfQuartets
         data = ""
         for quartet in quartets:
-            data += quartet[0] + ";"
-            data += quartet[1] + ";"
-            data += quartet[2] + ";"
-            data += quartet[3] + ";"
+            data += quartet[0]
+            data += quartet[1]
+            data += quartet[2]
+            data += quartet[3]
 
         self.objNetwork.sendData(data)
 

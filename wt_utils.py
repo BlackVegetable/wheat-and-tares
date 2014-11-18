@@ -176,14 +176,14 @@ def package_message_to_bits(msg_str, last_seq, auth_key, fake_str="", fake_key=N
             fake_mac = make_tare_hash(msg_bit, current_seq, entropy_file, custom_hash_func)
             comp_mac_B = make_tare_hash(cmp_bit, current_seq, entropy_file, custom_hash_func)
         
-        current_quartet = [str(msg_bit) + str(current_seq) + "," + real_mac]
-        current_quartet.append(str(cmp_bit) + str(current_seq) + "," + comp_mac_A)
+        current_quartet = [str(msg_bit) + str(current_seq) + "," + real_mac + ";"]
+        current_quartet.append(str(cmp_bit) + str(current_seq) + "," + comp_mac_A + ";")
         if matching:
-            current_quartet.append(str(msg_bit) + str(current_seq) + "," + fake_mac)
-            current_quartet.append(str(cmp_bit) + str(current_seq) + "," + comp_mac_B)
+            current_quartet.append(str(msg_bit) + str(current_seq) + "," + fake_mac + ";")
+            current_quartet.append(str(cmp_bit) + str(current_seq) + "," + comp_mac_B + ";")
         else:
-            current_quartet.append(str(cmp_bit) + str(current_seq) + "," + fake_mac)
-            current_quartet.append(str(msg_bit) + str(current_seq) + "," + comp_mac_B)
+            current_quartet.append(str(cmp_bit) + str(current_seq) + "," + fake_mac + ";")
+            current_quartet.append(str(msg_bit) + str(current_seq) + "," + comp_mac_B + ";")
         
         # Should we support using an entropy file for the shuffling?
         random.shuffle(current_quartet)
@@ -234,7 +234,6 @@ if __name__ == "__main__":
     for x in pkgd:
         for y in x:
             big_string += y
-            big_string += ";"
 
     print unpack_bits_to_message(big_string, real_key)
 
@@ -247,5 +246,4 @@ if __name__ == "__main__":
     for x in pkgd:
         for y in x:
             big_string += y
-            big_string += ";"
     print unpack_bits_to_message(big_string, real_key)
