@@ -4,11 +4,41 @@
 .SH NAME
 wheat-and-tares \- client for sending secure messages
 .SH SYNOPSIS
-wheat-and-tares [options]
+wheat-and-tares --key-file=<path> [--fake-key-file=<path>] [--port=<port>] [--entropy-file=<path>] [--alternate-hash=<path>] [--version]
+
 .SH DESCRIPTION
 wheat-and-tares is a client for sending secure messages without the use of encryption to hide any information. Rather the encryption is only used to authenticate. Complimentary message bits (tares) are sent at the same time as the actual message bits but are authenticated randomly. This leaves only the recipient sharing the authentication key with the capability to read the intended message.
 .SH OPTIONS
-Section pending
+--version
+
+Prints the wheat-and-tares version.
+
+--key-file=<path>
+
+Tells wheat-and-tares what file contains your shared authentication key.
+The first 32 bytes of the file will be used for your key.
+
+--fake-key-file=<path>
+
+If this option is used, an alternate message will be prompted for with each primary message you send. This option must point to a different file than the key file supplied by --key-file.
+
+--port=<port>
+
+If this option is used a custom port will be used to listen for wheat-and-tares messages; it will also send your messages to the same port number on the other end. The default value is 10122.
+
+--entropy-file=<path>
+
+If this option is specified, a file containing random bits must reside at the path given. These will be used in place of the default pseudo-random number generator's outupt. This file will be deleted when this program terminates. This should only be used if a true source of entropy produced the bits within the file!
+
+--alternate-has=<path>
+
+If this option is used, a file containing a single python function named "custom_hash_func" must exist at the given path. This function will be used in place of the default HMAC algorithm. This should only be used if the default algorithm is thought to be compromised and a stronger hash is written in that file. The function must return a 512-bit hash from a string of input of arbitrary length and a 32-byte key. For example:
+
+def custom_hash_func(cleartext, key):
+    h = my_hash_startup(key)
+    h.update(cleartext)
+    return h.tohex()
+
 .SH See ALSO
 Section pending
 .SH BUGS
