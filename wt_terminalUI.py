@@ -1,5 +1,3 @@
-#CS5490/6490
-#Final Project
 #Terminal Client
 
 #imports
@@ -11,62 +9,61 @@ import getopt
 from wt_core import wtCore
 
 #Private variables
+version = 1.0
 commandArgs = sys.argv[1:]
 myIP = None
-myPort = None
+myPort = 10122
 useFakeNetwork = 0
 
 
 def usage():
     print("")
-    print("usage: terminal.py -i <ipaddress> -p <port> [options]")
-    print("-i, --ipAddress      Host machine IP Address, may also use 127.0.0.1")
-    print("-p, --port           The port you use for incoming data")
-    print("-f, --fakeNetwork    Use a fake network instead")
-    print("-h, --help           Prints out proper usage of this program")
-    sys.exit(2)
-
-#make sure we have the required arguments
-# if (len(commandArgs) < 3):
-#     usage()
-
-# #Setup some variabls
-# myIP = commandArgs[1]
-# myPort = commandArgs[2]
-# useFakeNetwork = 0
-
-# if (len(commandArgs) > 3) and (commandArgs[3] == "1"):
-#     useFakeNetwork = 1
+    print("usage: wt_terminal.py [options]")
+    print("")
+    print("Options:")
+    print("--alternate-hash     [path]      Specify a file with your custom hash method.")
+    print("--entropy-file       [path]      Not yet implemented")
+    print("-f, --fakeNetwork                Use a fake network instead")
+    print("--fake-key-file      [path]      File that contains fake keys you want to use.")
+    print("-h, --help                       Prints out proper usage of this program")
+    print("--key-file           [path]      File that contains your authentication keys")
+    print("-p, --port           [port]      Custom port you and peer will listen on")
+    print("--version                        Prints the version")
 
 #use getOpt to neatly go through the command arguments passed into us.
+shortArgs = "fhp:"
+longArgs = ["fakeNetwork", "help", "port=", "alternateHash=", "entropyFile=", "fakeKeyFile=", "keyFile=","version"]
+
 try:
-    opts, args = getopt.getopt(commandArgs, "i:p:fh", ["ipAddress=", "port=", "fakeNetwork", "help"])
+    opts, args = getopt.getopt(commandArgs, shortArgs, longArgs)
 except getopt.GetoptError:
     usage()
     sys.exit(2)
 
 #Go through the command line arguments passed in and set appropriate variables
 for opt, arg in opts:
-    if opt in("-i", "--ipAddress"):
-        myIP = arg
-    elif opt in ("-p", "--port"):
+    if opt in ("-p", "--port"):
         myPort = arg
     elif opt in ("-f", "--fakeNetwork"):
         useFakeNetwork = 1
     elif opt in ("-h", "--help"):
         usage()
-        sys.exit(2)
-
-#Check to make sure we have the required arguments.
-if myIP is None:
-    print("")
-    print("You must provide the ip address for us to listen on")
-    usage()
-
-if myPort is None:
-    print("")
-    print("You must provide the port to listen on")
-    usage()
+        sys.exit(0)
+    elif opt == "--alternateHash":
+        print("Alternate hash is not implemented yet.")
+        sys.exit(0)
+    elif opt == "--entropyFile":
+        print("Entropy file functionality is not implemented yet.")
+        sys.exit(0)
+    elif opt == "--fakeKeyFile":
+        print("Fake key file functionality is not implemented yet.")
+        sys.exit(0)
+    elif opt == "--keyFile":
+        print("Key file functionality is not implemented yet.")
+        sys.exit(0)
+    elif opt == "--version":
+        print(version)
+        sys.exit(0)
 
 #Declare the core vairable
 core = None

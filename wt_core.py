@@ -60,7 +60,6 @@ class wtCore:
         self.peerIP = peerIP
         self.peerPort = peerPort
         self.outSequence = random.randint(0, 100000)
-        self.inSequence = None
         self.key = "12345678901234567890123456789012"
 
         #determine which network file to load
