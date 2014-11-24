@@ -66,7 +66,7 @@ def compliment_bits(bit_list):
             raise Exception("Bad input found in bit list input: " + `b`)
     return comp
 
-def unpack_bits_to_message(signed_bits, auth_key, frag_bits=None):
+def unpack_bits_to_message(signed_bits, auth_key, frag_bits=None, custom_hash_func=None):
     '''Unpacks a group of signed bits into an authentic message.
     Arguments:
         signed_bits = a string containing a series of message bits, sequence
@@ -95,7 +95,7 @@ def unpack_bits_to_message(signed_bits, auth_key, frag_bits=None):
         seq_number = t_split[0][1:]
         MAC = t_split[1]
 
-        test_hash = make_wheat_hash(msg_bit, seq_number, auth_key)
+        test_hash = make_wheat_hash(msg_bit, seq_number, auth_key, custom_hash_func)
         if test_hash == MAC:
             # This is a genuine message.
             msg_bits.append(int(msg_bit, 10))
@@ -247,3 +247,23 @@ if __name__ == "__main__":
         for y in x:
             big_string += y
     print unpack_bits_to_message(big_string, real_key)
+
+    raw_input("Press the ENTER key to continue.")
+    print "Testing custom hash function usage (MD5)."
+
+    from Crypto.Hash import MD5
+    def custom_hash_func(cleartext, key):
+        h = MD5.new()
+        h.update(key + cleartext) # Not secure, don't use in practice!
+        return h.hexdigest()
+
+    test_message = "I am a jelly donut."
+    print "Testing message: " + test_message
+    pkgd = package_message_to_bits(test_message, 112233, real_key,
+                                   custom_hash_func=custom_hash_func)
+    big_string = ""
+    for x in pkgd:
+        for y in x:
+            big_string += y
+    print unpack_bits_to_message(big_string, real_key,
+                                 custom_hash_func=custom_hash_func)
