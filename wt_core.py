@@ -22,7 +22,7 @@ class wtCore:
         while(True):
             data = self.objNetwork.getData()
             if(data is not None):
-                message = wt_utils.unpack_bits_to_message(data, self.authKey)
+                message = wt_utils.unpack_bits_to_message(data, self.authKey, None, self.customHash)
                 message = message["msg"]
                 self.messageList.append(message)
 
