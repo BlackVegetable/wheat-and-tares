@@ -22,14 +22,14 @@ class wtCore:
         while(True):
             data = self.objNetwork.getData()
             if(data is not None):
-                message = wt_utils.unpack_bits_to_message(data, self.key)
+                message = wt_utils.unpack_bits_to_message(data, self.authKey)
                 message = message["msg"]
                 self.messageList.append(message)
 
-    def sendMessage(self, message):
+    def sendMessage(self, message, fakeMessage=""):
         #This key is to get us started
         #get all the data to send.
-        quartets = wt_utils.package_message_to_bits(message, self.outSequence, self.key)
+        quartets = wt_utils.package_message_to_bits(message, self.outSequence, self.authKey, fakeMessage, self.fakeKey, self.customHash, self.entropyFile)
         #find how much to increment the sequence and then update sequence
         numberOfQuartets = len(quartets)
         self.outSequence += numberOfQuartets
@@ -54,13 +54,16 @@ class wtCore:
         except Exception:
             return False
 
-    def __init__(self, myIP, myPort, peerIP, peerPort, fakeNetwork):
+    def __init__(self, peerIP, authKey, fakeNetwork, peerPort, myIP=None, myPort=None, fakeAuthKey=None, customHash=None, entropyFile=None):
         self.myIP = myIP
         self.myPort = myPort
         self.peerIP = peerIP
         self.peerPort = peerPort
         self.outSequence = random.randint(0, 100000)
-        self.key = "12345678901234567890123456789012"
+        self.authKey = authKey
+        self.fakeKey = fakeAuthKey
+        self.customHash = customHash
+        self.entropyFile = entropyFile
 
         #determine which network file to load
         if(fakeNetwork == 1):

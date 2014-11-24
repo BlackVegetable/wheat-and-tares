@@ -12,8 +12,14 @@ from wt_core import wtCore
 version = 1.0
 commandArgs = sys.argv[1:]
 myIP = None
+peerIP = None
 myPort = 10122
+peerPort = 10122
 useFakeNetwork = 0
+authKey = None
+fakeAuthKey = None
+alternateHash = None
+entropyFile = None
 
 
 def usage():
@@ -21,10 +27,10 @@ def usage():
     print("usage: wt_terminal.py [options]")
     print("")
     print("Options:")
-    print("--alternate-hash     [path]      Specify a file with your custom hash method.")
-    print("--entropy-file       [path]      Not yet implemented")
+    print("--alternateHash     [path]      Specify a file with your custom hash method.")
+    print("--entropyFile       [path]      Not yet implemented")
     print("-f, --fakeNetwork                Use a fake network instead")
-    print("--fake-key-file      [path]      File that contains fake keys you want to use.")
+    print("--fakeKeyFile      [path]      File that contains fake keys you want to use.")
     print("-h, --help                       Prints out proper usage of this program")
     print("--key-file           [path]      File that contains your authentication keys")
     print("-p, --port           [port]      Custom port you and peer will listen on")
@@ -43,7 +49,11 @@ except getopt.GetoptError:
 #Go through the command line arguments passed in and set appropriate variables
 for opt, arg in opts:
     if opt in ("-p", "--port"):
-        myPort = arg
+        try:
+            myPort = int(arg)
+        except:
+            print("Port must be a number")
+            sys.exit(2)
     elif opt in ("-f", "--fakeNetwork"):
         useFakeNetwork = 1
     elif opt in ("-h", "--help"):
@@ -81,7 +91,7 @@ def backgroundWorker():
         newMessages = core.getMessages()
         if (len(newMessages) > 0):
             for message in newMessages:
-                allMessages.append(myIP + ": " + message)
+                allMessages.append("Peer: " + message)
 
             with lock:
                 os.system('cls' if os.name == 'nt' else 'clear')
@@ -101,16 +111,19 @@ os.system('cls' if os.name == 'nt' else 'clear')
 #print the welcom message
 print("Welcome to the simple chat program that is Wheat and Tare")
 
+#Get IP peer will be on.
 peerIP = raw_input("Enter the IP address of who you want to talk to: ")
-peerPort = None
-try:
-    peerPort = int(raw_input("Enter the port that your peer is using: "))
-except Exception as e:
-    print("Port must be a number")
+
+#USing default port for now.
+# try:
+#     peerPort = int(raw_input("Enter the port that your peer is using: "))
+# except Exception as e:
+#     print("Port must be a number")
 
 #initialize our core, if error is returned print the error and then exit.
 try:
-    core = wtCore(myIP, myPort, peerIP, peerPort, useFakeNetwork)
+    authKey = "12345678901234567890123456789012"
+    core = wtCore(peerIP, authKey, useFakeNetwork, peerPort, myIP, myPort, fakeAuthKey, alternateHash, entropyFile)
 except Exception as e:
     print(e)
     sys.exit(2)
