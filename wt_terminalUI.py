@@ -66,14 +66,31 @@ for opt, arg in opts:
         print("Entropy file functionality is not implemented yet.")
         sys.exit(0)
     elif opt == "--fakeKeyFile":
-        print("Fake key file functionality is not implemented yet.")
-        sys.exit(0)
+        try:
+            keyFile = open(arg, "r")
+            fakeAuthKey = keyFile.read()
+            keyFile.close()
+        except Exception as e:
+            print("")
+            print("Error opening fake key File")
+            sys.exit(0)
     elif opt == "--keyFile":
-        print("Key file functionality is not implemented yet.")
-        sys.exit(0)
+        try:
+            keyFile = open(arg, "r")
+            authKey = keyFile.read()
+            keyFile.close()
+        except Exception as e:
+            print("")
+            print("Error opening key File")
+            sys.exit(0)
     elif opt == "--version":
         print(version)
         sys.exit(0)
+
+#make sure we have a authKey before continuing.
+if (authKey is None):
+    print("No key, or invalid key, provided.")
+    sys.exit(2)
 
 #Declare the core vairable
 core = None
@@ -122,7 +139,7 @@ peerIP = raw_input("Enter the IP address of who you want to talk to: ")
 
 #initialize our core, if error is returned print the error and then exit.
 try:
-    authKey = "12345678901234567890123456789012"
+    #authKey = "12345678901234567890123456789012"
     core = wtCore(peerIP, authKey, useFakeNetwork, peerPort, myIP, myPort, fakeAuthKey, alternateHash, entropyFile)
 except Exception as e:
     print(e)
