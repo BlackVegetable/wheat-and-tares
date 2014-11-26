@@ -39,6 +39,10 @@ class wtCore:
             data += quartet[2]
             data += quartet[3]
 
+        #send how much data
+        self.objNetwork.sendData(str(len(data)))
+
+        #Now send the data iteself
         self.objNetwork.sendData(data)
 
     def getMessages(self):

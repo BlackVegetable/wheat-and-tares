@@ -13,7 +13,8 @@ class network:
         if(self.incomingSocket is None):
             _incomingSocket, peerAddress = self.serverSocket.accept()
             self.incomingSocket = _incomingSocket
-        data = self.incomingSocket.recv(4096)
+        dataSize = int(self.incomingSocket.recv(4096))
+        data = self.incomingSocket.recv(dataSize)
         return data
 
     def connect(self, _peerIp, _peerPort):
