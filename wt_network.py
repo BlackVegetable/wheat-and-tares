@@ -4,7 +4,7 @@
 import socket
 
 
-class fakeNetwork:
+class network:
 
     def sendData(self, _data):
         self.peerSocket.sendall(_data)
