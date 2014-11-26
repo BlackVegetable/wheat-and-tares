@@ -7,6 +7,7 @@ import os
 import threading
 import time
 import getopt
+import socket
 from wt_core import wtCore
 
 #Private variables
@@ -133,14 +134,13 @@ os.system('cls' if os.name == 'nt' else 'clear')
 #print the welcom message
 print("Welcome to the simple chat program that is Wheat and Tare")
 
-#Get IP peer will be on.
-peerIP = raw_input("Enter the IP address of who you want to talk to: ")
+#Show user a reachable IP.
+print("")
+print("This is your reachable IP Address:" + socket.gethostname())
 
-#USing default port for now.
-# try:
-#     peerPort = int(raw_input("Enter the port that your peer is using: "))
-# except Exception as e:
-#     print("Port must be a number")
+#Get IP peer will be on.
+print("")
+peerIP = raw_input("Enter the IP address of your peer: ")
 
 #initialize our core, if error is returned print the error and then exit.
 try:
