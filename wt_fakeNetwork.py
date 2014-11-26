@@ -1,5 +1,4 @@
-#CS5490/6490
-#Final Project
+#Wheat and Tare
 #Fake Network
 
 
