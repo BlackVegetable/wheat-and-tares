@@ -60,8 +60,12 @@ for opt, arg in opts:
         usage()
         sys.exit(0)
     elif opt == "--alternateHash":
-        print("Alternate hash is not implemented yet.")
-        sys.exit(0)
+        try:
+            import arg as customHash
+            alternateHash = customHash.custom_hash_func
+        except Exception as e:
+            print("There was an error importing you custom hash function")
+            sys.exit(2)
     elif opt == "--entropyFile":
         print("Entropy file functionality is not implemented yet.")
         sys.exit(0)
