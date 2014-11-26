@@ -61,10 +61,10 @@ for opt, arg in opts:
         sys.exit(0)
     elif opt == "--alternateHash":
         try:
-            import arg as customHash
+            customHash = __import__(arg)    #this is cool, allows you to import using string value.
             alternateHash = customHash.custom_hash_func
         except Exception as e:
-            print("There was an error importing you custom hash function")
+            print(e)
             sys.exit(2)
     elif opt == "--entropyFile":
         print("Entropy file functionality is not implemented yet.")
