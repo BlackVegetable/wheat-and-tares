@@ -136,7 +136,7 @@ print("Welcome to the simple chat program that is Wheat and Tare")
 
 #Show user a reachable IP.
 print("")
-print("This is your reachable IP Address:" + socket.gethostname())
+print("This is your reachable IP Address:" + socket.gethostbyname(socket.gethostname()))
 
 #Get IP peer will be on.
 print("")
@@ -152,12 +152,12 @@ except Exception as e:
 
 #Try to connect to peer, and loop until we do.
 while not core.connect():
-    print("Unable to connect to " + myIP + " on port " + myPort)
+    print("Unable to connect to " + peerIP)
     print("Will try again in 10 seconds")
     time.sleep(10)
 
 #Give user status update
-print("We are connected to " + peerIP + " on port " + str(peerPort))
+print("You are connected to " + peerIP + " on port " + str(peerPort))
 
 #Create a background thread that is used to get data from networking object
 backgroundThread = threading.Thread(target=backgroundWorker)

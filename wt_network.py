@@ -17,19 +17,20 @@ class network:
         return data
 
     def connect(self, _peerIp, _peerPort):
-        try:
-            self.peerSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.peerSocket.connect((_peerIp, _peerPort))
-            return True
-        except:
-            return False
+        #Throws error, calee is expected to catch this.
+        self.peerSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.peerSocket.connect((_peerIp, _peerPort))
+
 
     def __init__(self, _listenIP, _listenPort):
+        self.incomingSocket = None
+        self.peerSocket = None
+
         #create the default socket, which is TCP
         self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         listenIP = None
-        if(_listenPort is None):
+        if(_listenIP is None):
             #When this is used in bind, tell python to use any IP computer has.
             listenIP = ''
         else:

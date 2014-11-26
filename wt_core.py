@@ -50,7 +50,7 @@ class wtCore:
         try:
             self.objNetwork.connect(self.peerIP, self.peerPort)
             return True
-        except Exception:
+        except:
             return False
 
     def __init__(self, peerIP, authKey, fakeNetwork, peerPort, myIP=None, myPort=None, fakeAuthKey=None, customHash=None, entropyFile=None):
@@ -73,8 +73,8 @@ class wtCore:
         #create a network object to use.
         try:
             self.objNetwork = network(self.myIP, self.myPort)
-        except Exception as e:
-            raise wt_Exception(e)
+        except:
+            raise wt_Exception("Unable to bind to " + self.myIP + " on port " +self.myPort)
             return None
 
         #initialize list of messages to be empty.
