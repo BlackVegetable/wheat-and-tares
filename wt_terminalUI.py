@@ -108,6 +108,15 @@ allMessages = []
 lock = threading.Lock()
 
 
+def updateMessages():
+    os.system('cls' if os.name == 'nt' else 'clear')
+    for message in allMessages:
+        print(message)
+
+    print("")
+    #We cleared the prompt, notify user to press enter.
+    print("Press enter to start typing your message")
+
 #Call to get data from the networking object, then print data to the screen.
 def backgroundWorker():
     while True:
@@ -117,13 +126,7 @@ def backgroundWorker():
                 allMessages.append("Peer: " + message)
 
             with lock:
-                os.system('cls' if os.name == 'nt' else 'clear')
-                for message in allMessages:
-                    print(message)
-
-                print("")
-                #We cleared the prompt, notify user to press enter.
-                print("Press enter to start typing your message")
+                updateMessages()
 
         #sleep so that we don't use all of the processor
         time.sleep(1)
@@ -176,3 +179,4 @@ while (True):
         userMessage = raw_input("Type your message: ")
         allMessages.append("You: " + userMessage)
         core.sendMessage(userMessage)
+        updateMessages()
