@@ -172,9 +172,10 @@ backgroundThread.start()
 
 #Give user status update
 print("You can now type anything you want to send")
+print("Press enter to start typing your message")
 
 while (True):
-    raw_input("Press enter to start typing your message")
+    raw_input()
     with lock:
         userMessage = raw_input("Type your message: ")
         allMessages.append("You: " + userMessage)
