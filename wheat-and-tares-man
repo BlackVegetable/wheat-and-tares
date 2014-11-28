@@ -32,7 +32,7 @@ If this option is specified, a file containing random bits must reside at the pa
 
 --alternateHash <path>
 
-If this option is used, a file containing a single python function named "custom_hash_func" must exist at the given path. This function will be used in place of the default HMAC algorithm. This should only be used if the default algorithm is thought to be compromised and a stronger hash is written in that file. The function must return a 512-bit hash from a string of input of arbitrary length and a 32-byte key. For example:
+If this option is used, a file named "custom_hash_file.py" containing a single python function named "custom_hash_func" must exist at the given path. This function will be used in place of the default HMAC algorithm. This should only be used if the default algorithm is thought to be compromised and a stronger hash is written in that file. The function must return a 512-bit hash from a string of input of arbitrary length and a 32-byte key. For example:
 
 def custom_hash_func(cleartext, key):
     h = my_hash_startup(key)
