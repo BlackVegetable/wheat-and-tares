@@ -1,11 +1,45 @@
 
 from Crypto.Random import random
 from Crypto.Hash import SHA512, HMAC
+import os
+
+def read_random_bits(filename):
+    '''Will read the entire contents of a given entropy file
+    to memory. No caution is taken if the file is massive, let
+    the user beware about loading 16+ GB into RAM.'''
+    cached_bits = None
+    with open(filename, "r") as f:
+        bit_string = f.read()
+    unlikely = "00000000000000000000000000000000000000000000000"
+    if bit_string.startswith(unlikely):
+        raise Exception("File is very unlikely to be random. It is likely " +
+                        "that a previous use of this entropy file caused " +
+                        "the file to be overwritten with all 0s. This is " +
+                        "intentional. Please use a new entropy file.")
+    os.unlink(filename) # Intentionally uncaught exception.
+    with open(filename, "w") as f:
+        f.write(unlikely) # Prevent forensics from recovering deleted file.
+    return bit_string
+
+def get_bits_from_entropy_string(bit_string):
+    '''Returns a tuple of the first 256 bits as a "long" followed by the remaining
+    bits in the entropy file. Raises an exception if it runs out of bits.'''
+    if len(bit_string) < 32:
+        raise Exception("Exhausted supply of entropy bits in file.")
+    chosen_string_chunk = bit_string[0:32] # 32 bytes = 256 bits
+    chosen_bits = string_to_bits(chosen_string_chunk)
+    chosen_long = bits_to_long(chosen_bits)
+    return (chosen_long, bit_string[32:])
 
 def make_tare_hash(bit, seq, entropy_file=None, custom_hash_func=None):
-    if entropy_file:
-        raise NotImplementedError("Support for an entropy file is pending.")
-    secret = str(random.getrandbits(256))
+    secret = None
+    if entropy_file and "cached_bits" not in make_tare_hash.__dict__:
+        make_tare_hash.cached_bits = read_random_bits(entropy_file)
+    if "cached_bits" in make_tare_hash.__dict__ and make_tare_hash.cached_bits:
+        chosen_long, make_tare_hash.cached_bits = get_bits_from_entropy_string(make_tare_hash.cached_bits)
+        secret = str(chosen_long)
+    else:
+        secret = str(random.getrandbits(256))
     return make_wheat_hash(bit, seq, secret, custom_hash_func)
 
 def make_wheat_hash(bit, seq, auth_key, custom_hash_func=None):
@@ -48,6 +82,19 @@ def bits_to_string(bit_list):
             s += chr(number_value)
             number_value = 0
     return s
+
+def bits_to_long(bit_list):
+    '''Converts a given list of bits 'bit_list' to a long.
+    Arguments:
+        bit_list : The bits to convert to a long.
+    Returns:
+        A long.'''
+    if len(bit_list) % 8 != 0:
+        raise Exception("Bit list contains invalid number of bits.")
+    l = 0
+    for bit_pos in range(len(bit_list)):
+        l += bit_list[bit_pos] << (bit_pos)
+    return l
 
 def compliment_bits(bit_list):
     '''Converts a given list of bits 'bit_list' into its element-wise
@@ -267,3 +314,19 @@ if __name__ == "__main__":
             big_string += y
     print unpack_bits_to_message(big_string, real_key,
                                  custom_hash_func=custom_hash_func)
+
+    try:
+        test_message = "I am an entropy file."
+        print "Testing message: " + test_message
+        pkgd = package_message_to_bits(test_message, 112233, real_key,
+                                       custom_hash_func=custom_hash_func,
+                                       entropy_file="random_bits.bin")
+        big_string = ""
+        for x in pkgd:
+            for y in x:
+                big_string += y
+        print unpack_bits_to_message(big_string, real_key,
+                                     custom_hash_func=custom_hash_func)
+    except Exception as e:
+        print "An exception was caught. This may have been intentional: "
+        print `e`
