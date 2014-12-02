@@ -18,10 +18,16 @@ class wt_Exception:
 class wtCore:
 
     def backgroundWorker(self):
+        fragBits = None
+        #we always want to see if there is more data.
         while(True):
+            #get whatever we have from network.
             data = self.objNetwork.getData()
+            #check to make sure network did not receive close and returning bad data.
             if(data is not None):
-                message = wt_utils.unpack_bits_to_message(data, self.authKey, None, self.customHash)
+                #use utility to give us dictionary with message and remaining bits.
+                message = wt_utils.unpack_bits_to_message(data, self.authKey, fragBits, self.customHash)
+                fragBits = message["frag_bits"]
                 message = message["msg"]
                 self.messageList.append(message)
 
@@ -40,7 +46,8 @@ class wtCore:
             data += quartet[3]
 
         #send how much data
-        self.objNetwork.sendData(str(len(data)))
+        dataSize = len(data)
+        self.objNetwork.sendData(str(dataSize))
 
         #Now send the data iteself
         self.objNetwork.sendData(data)
