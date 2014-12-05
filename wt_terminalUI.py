@@ -76,6 +76,34 @@ def backgroundWorker(arg, stopEvent):
         stopEvent.set()
 
 
+def promptWorker(arg, stopEvent):
+    while(not stopEvent.is_set()):
+        if backgroundThread.is_alive() and core.backgroundThreadAlive():
+            if(raw_input() == "quitWT"):
+                stopEvent.set()
+            else:
+                with lock:
+                    userMessage = raw_input("Type your message: ")
+                    fakeMessage = ""
+                    if(useFakeMessage):
+                        loop = True
+                        while (loop):
+                            fakeMessage = raw_input("type your fake message")
+                            if(len(userMessage) == len(fakeMessage)):
+                                loop = False
+                    try:
+                        core.sendMessage(userMessage, fakeMessage)
+                        allMessages.append("You: " + userMessage)
+                        updateMessages()
+                    except Exception as e:
+                        print(e)
+                        stopThread.set()
+        else:
+            print("Background threads have stopped, exiting program")
+        time.sleep(0.1)
+    print("Exiting Program")
+
+
 #event handler for when ctrl+C is pushed
 def safeCleanup():
     print("Exiting Program")
@@ -232,34 +260,6 @@ except Exception as e:
 #Give user status update
 print("You can now type anything you want to send")
 print("Press enter to start typing your message")
-
-
-def promptWorker(arg, stopEvent):
-    while(not stopEvent.is_set()):
-        if backgroundThread.is_alive() and core.backgroundThreadAlive():
-            if(raw_input() == "quitWT"):
-                stopEvent.set()
-            else:
-                with lock:
-                    userMessage = raw_input("Type your message: ")
-                    fakeMessage = ""
-                    if(useFakeMessage):
-                        loop = True
-                        while (loop):
-                            fakeMessage = raw_input("type your fake message")
-                            if(len(userMessage) == len(fakeMessage)):
-                                loop = False
-                    try:
-                        core.sendMessage(userMessage, fakeMessage)
-                        allMessages.append("You: " + userMessage)
-                        updateMessages()
-                    except Exception as e:
-                        print(e)
-                        stopThread.set()
-        else:
-            print("Background threads have stopped, exiting program")
-        time.sleep(0.1)
-    print("Exiting Program")
 
 promptThread = threading.Thread(name="interfacePromptThread", target=promptWorker, args=(1, stopThread))
 promptThread.daemon = True
