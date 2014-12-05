@@ -67,12 +67,14 @@ for opt, arg in opts:
             alternateHash = customHash.custom_hash_func
         except Exception as e:
             print(e)
+            usage()
             sys.exit(2)
     elif opt == "--entropyFile":
         try:
-            test = open(arg, "r")
+            tmp = open(arg, "r")
         except:
             print(e)
+            usage()
             sys.exit(2)
         #If we are here, then no error with path.
         entropyFile=arg
@@ -84,6 +86,7 @@ for opt, arg in opts:
         except Exception as e:
             print("")
             print("Error opening fake key File")
+            usage()
             sys.exit(0)
     elif opt == "--keyFile":
         try:
@@ -93,6 +96,7 @@ for opt, arg in opts:
         except Exception as e:
             print("")
             print("Error opening key File")
+            usage()
             sys.exit(0)
     elif opt == "--version":
         print(version)
