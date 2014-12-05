@@ -153,7 +153,7 @@ def unpack_bits_to_message(signed_bits, auth_key, frag_bits=None, custom_hash_fu
     remainder_bits = []
     if remainder_size > 0:
         remainder_bits = msg_bits[-remainder_size:]
-        msg_bits = msg_bits[0:remainder_size]
+        msg_bits = msg_bits[0:-remainder_size]
     message = bits_to_string(msg_bits)
     return {'msg': message, 'frag_bits': remainder_bits}
 
@@ -315,6 +315,8 @@ if __name__ == "__main__":
     print unpack_bits_to_message(big_string, real_key,
                                  custom_hash_func=custom_hash_func)
 
+    
+
     try:
         test_message = "I am an entropy file."
         print "Testing message: " + test_message
@@ -330,3 +332,24 @@ if __name__ == "__main__":
     except Exception as e:
         print "An exception was caught. This may have been intentional: "
         print `e`
+
+    print "Now testing fragmentation bits."
+    test_message = "me"
+    print "The string 'me' in bits: " + `string_to_bits(test_message)`
+    pkgd = package_message_to_bits(test_message, 42, real_key)
+
+    big_string = ""
+    for i in range(9):
+        for x in pkgd[i]:
+            big_string += x
+    ret = unpack_bits_to_message(big_string, real_key)
+    print "Message: " + ret['msg']
+    print "fragmentation bits: " + `ret['frag_bits']`
+
+    big_string = ""
+    for i in [9, 10, 11, 12, 13, 14, 15]:
+        for x in pkgd[i]:
+            big_string += x
+    ret = unpack_bits_to_message(big_string, real_key, frag_bits=ret['frag_bits'])
+    print "Message: " + ret['msg']
+    print "fragmentation bits: " + `ret['frag_bits']`
