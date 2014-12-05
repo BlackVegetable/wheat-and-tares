@@ -69,8 +69,13 @@ for opt, arg in opts:
             print(e)
             sys.exit(2)
     elif opt == "--entropyFile":
-        print("Entropy file functionality is not implemented yet.")
-        sys.exit(0)
+        try:
+            test = open(arg, "r")
+        except:
+            print(e)
+            sys.exit(2)
+        #If we are here, then no error with path.
+        entropyFile=arg
     elif opt == "--fakeKeyFile":
         try:
             keyFile = open(arg, "r")
