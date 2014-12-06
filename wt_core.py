@@ -78,7 +78,7 @@ class wtCore:
         self.myPort = myPort
         self.peerIP = peerIP
         self.peerPort = peerPort
-        self.outSequence = random.randint(0, 100000)
+        self.outSequence = random.randint(0, 1000000000000)
         self.authKey = authKey
         self.fakeKey = fakeAuthKey
         self.customHash = customHash

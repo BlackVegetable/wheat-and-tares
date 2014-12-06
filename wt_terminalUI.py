@@ -88,7 +88,10 @@ def promptWorker(arg, stopEvent):
                     if(useFakeMessage):
                         loop = True
                         while (loop):
-                            fakeMessage = raw_input("type your fake message")
+                            print("Enter a fake message of length " + str(len(userMessage)) + " :")
+                            print("-" * len(userMessage))
+                            fakeMessage = raw_input()
+
                             if(len(userMessage) == len(fakeMessage)):
                                 loop = False
                     try:
