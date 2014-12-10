@@ -1,6 +1,6 @@
 .\" Manpage for wheat-and-tares.
 ." Contact devinj.ekins@gmail.com to correct errors or typos.
-.TH man 1 "08 Nov 2014" "0.1" "wheat-and-tares man page"
+.TH man 1 "08 Nov 2014" "1.0" "wheat-and-tares man page"
 .SH NAME
 wheat-and-tares \- client for sending secure messages
 .SH SYNOPSIS
@@ -39,9 +39,5 @@ def custom_hash_func(cleartext, key):
     h.update(cleartext)
     return h.tohex()
 
-.SH See ALSO
-Section pending
-.SH BUGS
-Imprevious to bugs due to redundant frog systems.
 .SH AUTHOR
 Joseph Cravotta, Devin Ekins, and Brenda Lamwaka.
